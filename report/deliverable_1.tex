@@ -1,0 +1,189 @@
+\documentclass[12pt]{article}
+
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{geometry}
+\usepackage{amsmath}
+\usepackage{microtype}
+\usepackage{setspace}
+\usepackage{parskip}
+\usepackage[hidelinks]{hyperref}
+\usepackage{microtype}
+\usepackage{setspace}
+\usepackage{parskip}
+\usepackage[hidelinks]{hyperref}
+
+\geometry{margin=1in}
+\setstretch{1.15}
+\setstretch{1.15}
+
+\title{AI-Based Predictive Analytics for Diabetes Complications}
+\author{
+Abdul Wahab \\
+Sami Shah \\
+Maheer Khurram
+}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\tableofcontents
+\newpage
+
+%------------------------------------------------
+
+\section{Introduction}
+
+Diabetes mellitus is a chronic metabolic disorder associated with severe long-term complications, including kidney disease, neuropathy, and cardiovascular conditions. Early identification of high-risk patients can improve disease management and reduce healthcare costs.
+
+This project develops a machine learning-based predictive analytics system to identify patients at risk of developing multiple diabetes-related complications from clinical data.
+
+%------------------------------------------------
+
+\section{Problem Definition}
+
+Traditional rule-based systems rely on static thresholds and isolated clinical measurements. In practice, diabetes complications develop gradually and are influenced by interactions among medication usage, laboratory results, and hospitalization patterns.
+
+Machine learning models can capture these complex relationships and generate predictive insights that support earlier clinical intervention.
+
+%------------------------------------------------
+
+\section{Dataset Description}
+
+This project uses the \textit{Diabetes 130-US Hospitals} dataset, which contains over 100,000 hospital encounters for diabetic patients from 130 hospitals (1999--2008).
+
+The dataset includes the following information:
+
+\begin{itemize}
+\item Patient demographics
+\item Laboratory test results
+\item Medication usage
+\item Hospital visit information
+\end{itemize}
+
+These variables are used to predict the likelihood of three diabetes-related complications:
+
+\begin{itemize}
+\item Cardiovascular complications
+\item Kidney disease
+\item Diabetic neuropathy
+\end{itemize}
+
+%------------------------------------------------
+
+\section{Data Acquisition}
+
+The dataset was obtained from the UCI Machine Learning Repository and downloaded locally for preprocessing and analysis. Python scripts were used to load, validate, and prepare the dataset for downstream modeling.
+
+%------------------------------------------------
+
+\section{Data Cleaning}
+
+Several preprocessing steps were performed to prepare the dataset for machine learning:
+
+\begin{itemize}
+\item Missing values represented by ``?'' were converted to NaN.
+\item Columns with excessive missingness (for example, weight, payer code, and medical specialty) were removed.
+\item Diagnosis codes were cleaned and standardized.
+\item Laboratory test variables were encoded to represent test outcomes.
+\end{itemize}
+
+%------------------------------------------------
+
+\section{Feature Engineering}
+
+Additional features were generated to support multi-label classification of diabetes complications.
+
+Binary target labels were created to indicate the presence of:
+
+\begin{itemize}
+\item Cardiovascular complications
+\item Kidney disease
+\item Neuropathy
+\end{itemize}
+
+These labels allow the predictive system to identify multiple complications within a single patient encounter.
+
+%------------------------------------------------
+
+\section{Exploratory Data Analysis}
+
+Exploratory Data Analysis (EDA) was conducted to understand dataset structure and identify clinically meaningful patterns.
+
+\subsection{Complication Distribution}
+
+Figure \ref{fig:class_dist} presents the distribution of the three complication categories.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.7\textwidth]{figures/class_distribution.png}
+\caption{Distribution of Diabetes Complications}
+\label{fig:class_dist}
+\end{figure}
+
+\subsection{Age Distribution}
+
+Figure \ref{fig:age_dist} illustrates the patient age distribution in the dataset.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.7\textwidth]{figures/age_distribution.png}
+\caption{Age Distribution of Patients}
+\label{fig:age_dist}
+\end{figure}
+
+\subsection{Feature Correlation}
+
+Figure \ref{fig:feature_corr} presents a correlation heatmap of relationships among clinical features.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth]{figures/feature_correlation.png}
+\caption{Correlation Between Dataset Features}
+\label{fig:feature_corr}
+\end{figure}
+
+\subsection{Complication Correlation}
+
+Figure \ref{fig:comp_corr} shows how different complications co-occur.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.6\textwidth]{figures/complication_correlation.png}
+\caption{Correlation Between Diabetes Complications}
+\label{fig:comp_corr}
+\end{figure}
+
+\subsection{Hospital Visit Patterns}
+
+Figure \ref{fig:visits} summarizes the average number of outpatient, emergency, and inpatient visits.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.7\textwidth]{figures/average_visits.png}
+\caption{Average Hospital Visits}
+\label{fig:visits}
+\end{figure}
+
+\subsection{Insulin Usage}
+
+Figure \ref{fig:insulin} shows the distribution of insulin treatment levels across patients.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.7\textwidth]{figures/insulin_usage.png}
+\caption{Distribution of Insulin Usage}
+\label{fig:insulin}
+\end{figure}
+
+%------------------------------------------------
+
+\section{Conclusion}
+
+This deliverable defined the problem scope and prepared the dataset for machine learning. Data preprocessing and exploratory analysis transformed raw clinical records into a structured dataset suitable for predictive analytics.
+
+Future work will focus on training multi-label machine learning models and evaluating performance using sensitivity and F1-score metrics.
+
+\end{document}
