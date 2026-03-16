@@ -205,3 +205,32 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+
+# datasets
+*.csv
+*.zip
+*.pkl
+
+# python cache
+__pycache__/
+*.pyc
+
+# virtual environments
+venv/
+.env/
+
+# jupyter checkpoints
+.ipynb_checkpoints/
+
+# OS files
+.DS_Store
+
+# LaTeX build files
+*.aux
+*.fdb_latexmk
+*.fls
+*.log
+*.out
+*.synctex.gz
+*.toc
