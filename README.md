@@ -71,7 +71,7 @@ diabetes-complication-risk-prediction-model/
 ├── data_scripts/
 │   ├── data_collection.py
 │   ├── cleaning.py
-│   ├── preprocessing.py
+│   ├── data_preprocessing.py
 │   └── feature_engineering.py
 │
 ├── notebooks/
