@@ -75,7 +75,7 @@ diabetes-complication-risk-prediction-model/
 │   └── feature_engineering.py
 │
 ├── notebooks/
-│   └── deliverable_1.ipynb
+│   └── exploratory_data_analysis.ipynb
 │
 └── report/
     └── deliverable_1/
