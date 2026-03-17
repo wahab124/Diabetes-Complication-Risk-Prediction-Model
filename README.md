@@ -101,7 +101,7 @@ diabetes-complication-risk-prediction-model/
 The data processing pipeline consists of the following steps:
 
 ### 1. Data Collection
-- Dataset downloaded from an open data source such as Kaggle or UCI.
+- Dataset downloaded from an open data source, UCI.
 
 ### 2. Data Cleaning
 - Handling missing values
