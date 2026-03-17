@@ -173,7 +173,7 @@ python data_scripts/feature_engineering.py
 ```
 5. Open the exploratory analysis notebook
 ```bash
-jupyter notebook notebooks/exploratory_data_analysis.ipynb
+jupyter notebook notebooks/deliverable_1.ipynb
 ```
 
 ## Contributors
