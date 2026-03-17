@@ -167,6 +167,7 @@ pip install -r requirements.txt
 ```
 4. Run the data preprocessing scripts
 ```bash
+python data_scripts/data_collection.py
 python data_scripts/cleaning.py
 python data_scripts/data_preprocessing.py
 python data_scripts/feature_engineering.py
