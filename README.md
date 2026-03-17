@@ -78,16 +78,17 @@ diabetes-complication-risk-prediction-model/
 │   └── deliverable_1.ipynb
 │
 └── report/
-    └── deliverable_1/
         └── deliverable_1.tex
         └── deliverable_1.pdf
         └── figures
-            └── age_distribution.png
-            └── average_visits.png
-            └── class_distribution.png
-            └── complication_correlation.png
-            └── feature_correlation.png
-            └── insulin_usage.png
+            └── deliverable_1/
+                └── age_distribution.png
+                └── average_visits.png
+                └── class_distribution.png
+                └── complication_correlation.png
+                └── feature_correlation.png
+                └── insulin_usage.png
+        
 ```
 
 
