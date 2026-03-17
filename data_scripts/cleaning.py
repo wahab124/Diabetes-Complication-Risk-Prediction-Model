@@ -45,7 +45,7 @@ def clean_dataset(df):
 
 if __name__ == "__main__":
 
-    df = load_dataset("/home/sami/Diabetes Complication Risk Prediction Model/data/diabetic_data.csv")
+    df = load_dataset("/home/sami/Diabetes Complication Risk Prediction Model/data/raw_data.csv")
     
     
     df = replace_missing_values(df)
