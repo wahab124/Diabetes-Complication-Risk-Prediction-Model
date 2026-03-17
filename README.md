@@ -81,7 +81,7 @@ diabetes-complication-risk-prediction-model/
     └── deliverable_1/
         └── report.tex
         └── report.pdf
-        └── figures
+        └── figures/
             └── age_distribution.png
             └── average_visits.png
             └── class_distribution.png
