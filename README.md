@@ -75,18 +75,18 @@ diabetes-complication-risk-prediction-model/
 │   └── feature_engineering.py
 │
 ├── notebooks/
-│   └── exploratory_data_analysis.ipynb
+│   ├── exploratory_data_analysis.ipynb
 │
 └── report/
-    └── deliverable_1/
-        └── report.tex
-        └── report.pdf
+    ├── deliverable_1/
+        ├── report.tex
+        ├── report.pdf
         └── figures/
-            └── age_distribution.png
-            └── average_visits.png
-            └── class_distribution.png
-            └── complication_correlation.png
-            └── feature_correlation.png
+            ├── age_distribution.png
+            ├── average_visits.png
+            ├── class_distribution.png
+            ├── complication_correlation.png
+            ├── feature_correlation.png
             └── insulin_usage.png
         
 ```
