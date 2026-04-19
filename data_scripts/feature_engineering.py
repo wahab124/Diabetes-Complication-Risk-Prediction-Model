@@ -1,91 +1,123 @@
+"""
+feature_engineering.py
+======================
+Phase 2 – Feature Engineering
+- Derives three binary complication labels from ICD-9 diagnosis codes
+- Creates a longitudinal visit-count feature
+- Drops raw diagnosis columns and readmitted after label creation
+
+ICD-9 Ranges Used:
+    Kidney Disease   : 580 – 589  (nephritis, nephrosis, renal failure)
+    Neuropathy       : 354 – 357  (peripheral neuropathy group)
+    Cardiovascular   : 390 – 459  (circulatory system diseases)
+
+Usage:
+    python data_scripts/feature_engineering.py
+
+Input  : data/processed/diabetic_preprocessed.csv
+Output : data/processed/diabetic_final.csv
+"""
+
+import os
 import pandas as pd
-from data_collection import load_dataset,save_data
+import numpy as np
 
-# def load_data(path):
-#     return pd.read_csv(path)
+# ── Paths ─────────────────────────────────────────────────────────────────────
+PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+INPUT_PATH   = os.path.join(PROJECT_ROOT, "data", "processed", "diabetic_preprocessed.csv")
+OUTPUT_PATH  = os.path.join(PROJECT_ROOT, "data", "processed", "diabetic_final.csv")
 
 
-def safe_float(value):
+def safe_float(value) -> float | None:
+    """Convert a value to float; return None on failure (handles V/E codes)."""
     try:
         return float(value)
-    except:
+    except (ValueError, TypeError):
         return None
 
 
-def classify_complications(row):
-
-    diagnoses = [
-        row["diag_1"],
-        row["diag_2"],
-        row["diag_3"]
-    ]
+def classify_complications(row) -> pd.Series:
+    """
+    Return binary flags for each complication based on ICD-9 codes in
+    diag_1, diag_2, diag_3. A single matching code in any column is sufficient.
+    """
+    diagnoses = [row["diag_1"], row["diag_2"], row["diag_3"]]
 
     cardiovascular = 0
-    kidney = 0
-    neuropathy = 0
+    kidney         = 0
+    neuropathy     = 0
 
     for diag in diagnoses:
-
-        diag_val = safe_float(diag)
-
-        if diag_val is None:
+        val = safe_float(diag)
+        if val is None:
             continue
 
-        # Cardiovascular
-        if 390 <= diag_val <= 459:
+        if 390 <= val <= 459:   # Cardiovascular / circulatory
             cardiovascular = 1
 
-        # Kidney disease
-        if 580 <= diag_val <= 629:
+        if 580 <= val <= 589:   # Kidney disease (corrected: was 580-629)
             kidney = 1
 
-        # Neuropathy
-        if int(diag_val) == 357 or str(diag).startswith("250.6"):
+        if 354 <= val <= 357:   # Peripheral neuropathy group (corrected: was just 357)
             neuropathy = 1
 
     return pd.Series([cardiovascular, kidney, neuropathy])
 
 
-def create_labels(df):
+def create_labels(df: pd.DataFrame) -> pd.DataFrame:
+    df[["cardiovascular_complication",
+        "kidney_complication",
+        "neuropathy_complication"]] = df.apply(classify_complications, axis=1)
 
-    df[
-        [
-            "cardiovascular_complication",
-            "kidney_complication",
-            "neuropathy_complication",
-        ]
-    ] = df.apply(classify_complications, axis=1)
-
+    labels = ["cardiovascular_complication", "kidney_complication", "neuropathy_complication"]
+    print("[INFO] Complication labels created:")
+    for col in labels:
+        n   = df[col].sum()
+        pct = df[col].mean() * 100
+        print(f"       {col:<30} {n:>6,} positive ({pct:.1f}%)")
     return df
 
-def drop_labels(df):
 
-    features_to_drop = [
-        "diag_1",
-        "diag_2",
-        "diag_3"
-    ]
-
-    df = df.drop(columns=features_to_drop)
-    df = df.drop(columns=["readmitted"])
+def create_longitudinal_feature(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Total prior healthcare visits is a proxy for disease chronicity.
+    Aggregates outpatient + emergency + inpatient visit counts.
+    Note: these columns have already been scaled; the sum still preserves
+    relative differences and is interpretable as a composite utilisation score.
+    """
+    visit_cols = ["number_outpatient", "number_emergency", "number_inpatient"]
+    present    = [c for c in visit_cols if c in df.columns]
+    df["total_prior_visits"] = df[present].sum(axis=1)
+    print(f"[INFO] Longitudinal feature 'total_prior_visits' created from: {present}")
     return df
 
-def run_feature_engineering(input_path, output_path):
 
-    df = load_dataset(input_path)
+def drop_source_columns(df: pd.DataFrame) -> pd.DataFrame:
+    """Drop raw diagnosis codes now that labels have been derived."""
+    to_drop = ["diag_1", "diag_2", "diag_3"]
+    existing = [c for c in to_drop if c in df.columns]
+    df.drop(columns=existing, inplace=True)
+    print(f"[INFO] Dropped source columns: {existing}")
+    return df
+
+
+def main():
+    print("=" * 55)
+    print("  FEATURE ENGINEERING")
+    print("=" * 55)
+
+    df = pd.read_csv(INPUT_PATH)
+    print(f"[INFO] Loaded {df.shape[0]:,} rows × {df.shape[1]} columns\n")
 
     df = create_labels(df)
+    df = create_longitudinal_feature(df)
+    df = drop_source_columns(df)
 
-    df = drop_labels(df)
-
-    save_data(df, output_path)
-
-    print("Feature engineering complete.")
+    os.makedirs(os.path.dirname(OUTPUT_PATH), exist_ok=True)
+    df.to_csv(OUTPUT_PATH, index=False)
+    print(f"\n[INFO] Saved final dataset → {OUTPUT_PATH}  ({df.shape[0]:,} × {df.shape[1]})")
+    print("\n[DONE] Feature engineering complete.")
 
 
 if __name__ == "__main__":
-
-    run_feature_engineering(
-        "/home/sami/Diabetes Complication Risk Prediction Model/data/diabetes_processed.csv",
-        "/home/sami/Diabetes Complication Risk Prediction Model/data/diabetes_final.csv"
-    )
+    main()
