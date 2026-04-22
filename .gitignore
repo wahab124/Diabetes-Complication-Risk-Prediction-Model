@@ -2,6 +2,9 @@
 data/processed/
 data/raw/
 
+# Models
+models/
+
 # ── Python ───────────────────────────────────────────────────────────────────
 __pycache__/
 *.py[cod]
