@@ -48,3 +48,23 @@ desktop.ini
 .idea/
 *.swp
 *.swo
+
+# Model files
+*.pkl
+*.joblib
+*.pt
+*.pth
+*.h5
+*.onnx
+
+# Data files
+*.csv
+*.parquet
+*.db
+
+# Environment
+venv/
+__pycache__/*.pkl
+*.joblib
+*.pt
+*.pth
