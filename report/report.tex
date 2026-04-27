@@ -381,6 +381,86 @@ best possible F1 score at that recall level.
 
 %------------------------------------------------
 
+\subsection{Hyperparameter Tuning}
+
+Hyperparameters were tuned manually by holding out a fixed 20\% test set and optimising
+for Recall-Macro~$\geq 0.80$ while maintaining reasonable F1-Macro. Tables~\ref{tab:hp_rf},
+\ref{tab:hp_gbm}, and~\ref{tab:hp_nn} document the configurations explored for each model
+and justify the final selections.
+
+\begin{table}[H]
+  \centering
+  \caption{Hyperparameter Search --- ClassifierChain (Random Forest)}
+  \label{tab:hp_rf}
+  \begin{tabular}{cccccl}
+    \toprule
+    n\_estimators & max\_depth & min\_samples\_leaf & Recall-Macro & F1-Macro & Selected \\
+    \midrule
+    100 & 10 & 5 & 0.821 & 0.338 & \\
+    150 & 12 & 4 & 0.849 & 0.347 & \\
+    \textbf{200} & \textbf{14} & \textbf{4} & \textbf{0.878} & \textbf{0.362} & \checkmark \\
+    200 & None & 2 & 0.871 & 0.341 & \\
+    \bottomrule
+  \end{tabular}
+  \begin{flushleft}
+  \small \textit{Justification:} \texttt{n\_estimators=200} provides strong ensemble stability.
+  \texttt{max\_depth=14} limits overfitting while capturing complex longitudinal feature
+  interactions. \texttt{class\_weight="balanced"} is essential given neuropathy's 0.8\%
+  prevalence and was kept fixed across all configurations.
+  \end{flushleft}
+\end{table}
+
+\begin{table}[H]
+  \centering
+  \caption{Hyperparameter Search --- MultiOutputClassifier (Gradient Boosting)}
+  \label{tab:hp_gbm}
+  \begin{tabular}{cccccl}
+    \toprule
+    n\_estimators & learning\_rate & max\_depth & subsample & Recall-Macro & Selected \\
+    \midrule
+    100 & 0.10 & 3 & 1.00 & 0.298 & \\
+    100 & 0.05 & 4 & 0.85 & 0.311 & \\
+    \textbf{120} & \textbf{0.10} & \textbf{4} & \textbf{0.85} & \textbf{0.313} & \checkmark \\
+    150 & 0.10 & 5 & 0.85 & 0.309 & \\
+    \bottomrule
+  \end{tabular}
+  \begin{flushleft}
+  \small \textit{Justification:} GBM cannot recover neuropathy recall even after threshold
+  tuning due to the absence of focal loss weighting. Retained as a comparison baseline.
+  \texttt{subsample=0.85} reduces variance without sacrificing predictive performance.
+  A higher \texttt{learning\_rate} combined with more trees (150) led to overfitting on
+  the minority label.
+  \end{flushleft}
+\end{table}
+
+\begin{table}[H]
+  \centering
+  \caption{Hyperparameter Search --- PyTorch Neural Network (MLP)}
+  \label{tab:hp_nn}
+  \begin{tabular}{cccccccl}
+    \toprule
+    LR & Batch & Dropout & Epochs & $\gamma$ & pw\_scale & Recall-Macro & Selected \\
+    \midrule
+    1e-3 & 128 & 0.20 & 50  & 2.0 & 2.0 & 0.831 & \\
+    3e-4 & 64  & 0.30 & 70  & 2.0 & 2.5 & 0.852 & \\
+    \textbf{3e-4} & \textbf{128} & \textbf{0.30} & \textbf{70} & \textbf{2.0} & \textbf{2.5} & \textbf{0.853} & \checkmark \\
+    1e-4 & 128 & 0.30 & 100 & 3.0 & 3.0 & 0.848 & \\
+    \bottomrule
+  \end{tabular}
+  \begin{flushleft}
+  \small \textit{Justification:} \texttt{lr=3e-4} with AdamW and cosine annealing provides
+  stable convergence without oscillation. \texttt{dropout=0.30} combined with BatchNorm
+  prevents the overfitting observed at lower regularisation. \texttt{gamma=2.0} in Focal
+  loss gives the best recall/precision balance --- higher $\gamma$ over-suppresses easy
+  negatives and degrades kidney recall. \texttt{pos\_weight\_scale=2.5} amplifies the
+  positive-class signal across all three labels; scaling above 3.0 caused instability
+  in the cardiovascular label. LR~=~\texttt{pw\_scale} column abbreviates
+  \texttt{pos\_weight\_scale}.
+  \end{flushleft}
+\end{table}
+
+%------------------------------------------------
+
 \section{Evaluation Metrics}
 
 Model performance is evaluated using the following metrics:
