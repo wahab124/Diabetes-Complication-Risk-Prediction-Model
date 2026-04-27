@@ -451,7 +451,7 @@ def main():
                     key=lambda k: all_metrics[k]["rec_macro"])
     best = all_metrics[best_name]
     print(f"\n{'='*55}")
-    print(f"  BEST MODEL: {best_name}")
+    print(f"  BEST MODEL: {best_name}") 
     print(f"{'='*55}")
     print(f"  F1-Micro     : {best['f1_micro']:.4f}")
     print(f"  F1-Macro     : {best['f1_macro']:.4f}")
