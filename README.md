@@ -85,7 +85,7 @@ Diabetes-Complication-Risk-Prediction-Model/
 
 > **Trained model weights are hosted externally due to file size.**
 >
-> Download: [Google Drive — Model Weights](https://drive.google.com/drive/folders/PLACEHOLDER_LINK_REPLACE_THIS)
+> Download: [Hugging Face — Model Weights](https://huggingface.co/samishah2004/Diabetes-Complication-Risk-Prediction-Model)
 >
 > Place the downloaded files into the `models/` directory before running `evaluate.py` or `bias_check.py`.
 
