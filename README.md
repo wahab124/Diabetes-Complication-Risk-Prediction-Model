@@ -1,5 +1,8 @@
 # AI-Based Multi-Label Prediction of Diabetes Complications
 
+## Live Demo
+**Deployed Application:** https://huggingface.co/spaces/samishah2004/dcrp
+
 ## Project Overview
 
 This project develops an AI-based predictive analytics system that estimates the risk of multiple diabetes-related complications using patient clinical data. The model uses machine learning techniques to predict the likelihood of complications such as kidney disease, neuropathy, and cardiovascular conditions.
