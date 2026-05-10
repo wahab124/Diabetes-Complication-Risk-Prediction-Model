@@ -10,6 +10,7 @@
 \usepackage{booktabs}
 \usepackage{multirow}
 \usepackage{array}
+\usepackage{xcolor}
 \usepackage[hidelinks]{hyperref}
 \usepackage{tikz}
 \usetikzlibrary{shapes,arrows,positioning,fit,backgrounds}
@@ -29,6 +30,30 @@ Sheikh Azan Aziz
 \begin{document}
 
 \maketitle
+
+\begin{abstract}
+Diabetes mellitus is a leading cause of preventable long-term complications including
+cardiovascular disease, chronic kidney disease, and peripheral neuropathy.
+Traditional clinical screening relies on single-visit measurements and fixed thresholds,
+which may fail to capture the progressive nature of diabetic complications.
+This project develops a multi-label machine learning system that simultaneously
+predicts the risk of three complication types from longitudinal clinical records
+derived from the UCI Diabetes 130-US Hospitals dataset (101,766 encounters,
+71,518 unique patients).
+Three classifiers were trained and compared: ClassifierChain (Random Forest),
+MultiOutputClassifier (Gradient Boosting), and a PyTorch Neural Network with
+Focal BCE loss for imbalanced learning.
+After threshold optimisation, the ClassifierChain (Random Forest) achieved
+\textbf{Recall-Macro = 0.878} across all three labels simultaneously---the primary
+clinical objective of minimising missed complication cases.
+\end{abstract}
+
+\vspace{0.5em}
+\begin{center}
+\small\textbf{Deployment URL:}~\url{https://huggingface.co/spaces/samishah2004/dcrp}
+\end{center}
+
+\newpage
 \tableofcontents
 \newpage
 
@@ -74,12 +99,12 @@ as a separate independent problem.
 This predictive tool is designed for two primary user groups:
 
 \begin{enumerate}
-  \item \textbf{Clinical endocrinologists and primary care physicians} — to identify
+  \item \textbf{Clinical endocrinologists and primary care physicians} --- to identify
         diabetic patients at highest risk of developing multiple complications
         simultaneously, enabling earlier, targeted interventions such as medication
         adjustment or specialist referral.
 
-  \item \textbf{Hospital risk management and population health teams} — to stratify
+  \item \textbf{Hospital risk management and population health teams} --- to stratify
         patient cohorts for resource allocation, preventive care programs, and
         readmission reduction strategies.
 \end{enumerate}
@@ -92,6 +117,7 @@ often develop overlapping complications (e.g., cardiovascular disease \textit{an
 neuropathy). Furthermore, it leverages \textit{longitudinal features} (slope, delta,
 trends across multiple hospital encounters) rather than static snapshots, an approach
 underutilized in prior rule-based and machine learning systems for diabetes.
+
 %------------------------------------------------
 
 \section{Dataset Description}
@@ -189,11 +215,11 @@ diabetes complication prediction system.
 \centering
 \begin{tikzpicture}[
     node distance=1cm,
-    block/.style={rectangle, draw, fill=blue!20, text width=3.2cm, text centered, 
+    block/.style={rectangle, draw, fill=blue!20, text width=3.2cm, text centered,
                   minimum height=0.8cm, font=\small},
-    data/.style={rectangle, draw, fill=green!20, text width=3.2cm, text centered, 
+    data/.style={rectangle, draw, fill=green!20, text width=3.2cm, text centered,
                  minimum height=0.8cm, font=\small},
-    model/.style={rectangle, draw, fill=orange!20, text width=3.2cm, text centered, 
+    model/.style={rectangle, draw, fill=orange!20, text width=3.2cm, text centered,
                   minimum height=0.8cm, font=\small},
     arrow/.style={thick,->,>=stealth}
 ]
@@ -227,7 +253,7 @@ diabetes complication prediction system.
 
 % Group models
 \begin{pgfonlayer}{background}
-\node[draw, dashed, fit=(chain)(mo)(nn), inner sep=6pt, 
+\node[draw, dashed, fit=(chain)(mo)(nn), inner sep=6pt,
       label={above:\textbf{Model Ensemble}}] {};
 \end{pgfonlayer}
 
@@ -336,7 +362,7 @@ classification} problem. Three modelling strategies were implemented:
 \begin{itemize}
   \item \textbf{ClassifierChain (Random Forest):} Trains a sequence of classifiers where
         each label prediction is conditioned on the predictions of previous labels. This
-        captures inter-label correlations — for example, the co-occurrence of kidney
+        captures inter-label correlations --- for example, the co-occurrence of kidney
         disease and neuropathy.
 
   \item \textbf{MultiOutputClassifier (Gradient Boosting):} Trains an independent
@@ -454,8 +480,7 @@ and justify the final selections.
   loss gives the best recall/precision balance --- higher $\gamma$ over-suppresses easy
   negatives and degrades kidney recall. \texttt{pos\_weight\_scale=2.5} amplifies the
   positive-class signal across all three labels; scaling above 3.0 caused instability
-  in the cardiovascular label. LR~=~\texttt{pw\_scale} column abbreviates
-  \texttt{pos\_weight\_scale}.
+  in the cardiovascular label. pw\_scale abbreviates \texttt{pos\_weight\_scale}.
   \end{flushleft}
 \end{table}
 
@@ -733,7 +758,7 @@ systematic gaps in model performance:
 
 \textbf{Age:} The under-40 age group shows the most severe failure, with
 cardiovascular recall of only 0.360. This is likely due to low positive case
-counts in this age bracket — younger diabetic patients rarely present with
+counts in this age bracket --- younger diabetic patients rarely present with
 cardiovascular complications in hospitalisation records, leaving the model
 with insufficient training signal. Kidney disease recall also falls short for
 the 40--59 group (0.739) and neuropathy recall drops to 0.750 for patients
@@ -797,7 +822,7 @@ overall prevalence (0.8\%).
 \section{Team Contributions}
 
 Table~\ref{tab:contributions} maps each team member to specific project modules,
-providing accountability for all deliverables (Phases 1-4).
+providing accountability for all deliverables (Phases 1--5).
 
 \begin{table}[H]
 \centering
@@ -829,6 +854,10 @@ providing accountability for all deliverables (Phases 1-4).
 & Feature importance analysis & Maheer Khurram \\
 & Demographic subgroup analysis & Azan Aziz \\
 \midrule
+\multirow{3}{*}{Deployment} & Streamlit application (app.py) & Maheer Khurram \\
+& Hugging Face Spaces deployment & Sami Shah \\
+& Inference pipeline \& feature reconstruction & Abdul Wahab \\
+\midrule
 \multirow{3}{*}{Documentation} & LaTeX report compilation & Abdul Wahab \\
 & Architecture diagram design & Sami Shah \\
 & Contribution table & Azan Aziz \\
@@ -841,22 +870,24 @@ providing accountability for all deliverables (Phases 1-4).
 \subsection*{Contribution Summary}
 
 \begin{itemize}
-    \item \textbf{Abdul Wahab}: Data acquisition, data cleaning \& preprocessing, 
-          threshold tuning framework, confusion matrix analysis, LaTeX report compilation.
-    
-    \item \textbf{Sami Shah}: Longitudinal feature engineering, PyTorch Neural Network 
+    \item \textbf{Abdul Wahab}: Data acquisition, data cleaning \& preprocessing,
+          threshold tuning framework, confusion matrix analysis, inference pipeline
+          \& feature reconstruction, LaTeX report compilation.
+
+    \item \textbf{Sami Shah}: Longitudinal feature engineering, PyTorch Neural Network
           architecture, Focal BCE loss implementation, metrics computation (F1, AUC, recall),
-          error analysis \& bias detection, architecture diagram design.
-    
-    \item \textbf{Maheer Khurram}: ClassifierChain (Random Forest) implementation, 
-          hyperparameter optimisation, ROC curves \& visualisation, feature importance analysis,
+          error analysis \& bias detection, architecture diagram design,
+          Hugging Face Spaces deployment.
+
+    \item \textbf{Maheer Khurram}: ClassifierChain (Random Forest) implementation,
+          hyperparameter optimisation, ROC curves \& visualisation, feature importance
+          analysis, Streamlit application development,
           \textbf{Project Lead} (system integration, final model selection, threshold strategy).
-    
+
     \item \textbf{Azan Aziz}: MultiOutputClassifier (Gradient Boosting) implementation,
-          class imbalance handling, threshold sensitivity analysis, demographic subgroup 
+          class imbalance handling, threshold sensitivity analysis, demographic subgroup
           analysis, contribution table.
 \end{itemize}
-
 
 %------------------------------------------------
 
@@ -869,11 +900,213 @@ were trained and compared: ClassifierChain (Random Forest), MultiOutputClassifie
 
 The \textbf{ClassifierChain (Random Forest) with tuned thresholds} was selected as the
 final model, achieving recall $\geq 0.80$ across all three complication labels
-simultaneously — the primary clinical objective. ROC-AUC values of 0.71--0.77 across
+simultaneously --- the primary clinical objective. ROC-AUC values of 0.71--0.77 across
 labels confirm meaningful discriminative ability despite severe class imbalance in the
 neuropathy label.
 
 Future work could explore SMOTE oversampling for the neuropathy class, incorporation of
 actual temporal visit timestamps, and validation against an external clinical dataset.
+
+\newpage
+
+% ============================================================
+% DELIVERABLE 3
+% ============================================================
+
+\section*{Deliverable 3: Deployment and Final Technical Report}
+\addcontentsline{toc}{section}{Deliverable 3: Deployment and Final Technical Report}
+
+%------------------------------------------------
+
+\section{Application Deployment}
+
+\subsection{Deployment Overview}
+
+The trained ClassifierChain (Random Forest) model was packaged into a Streamlit web
+application and deployed on \textbf{Hugging Face Spaces} for public access.
+The application provides a real-time clinical decision-support interface allowing
+users to enter patient data and receive simultaneous risk scores for all three
+diabetes complications.
+
+\begin{center}
+\fbox{\parbox{0.85\textwidth}{%
+    \centering
+    \textbf{Live Application URL} \\[0.3em]
+    \url{https://huggingface.co/spaces/samishah2004/dcrp}
+}}
+\end{center}
+
+\subsection{Application Architecture}
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+    node distance=1.3cm and 2cm,
+    box/.style={rectangle, rounded corners=4pt, draw=#1, fill=#1!10,
+                text width=3.0cm, align=center, font=\small, minimum height=1cm},
+    arr/.style={->, thick, #1},
+]
+    \node[box=blue!60]  (ui)     {Streamlit UI\\(app.py)};
+    \node[box=teal!60,  right=of ui]  (feat)   {Feature\\Engineering};
+    \node[box=orange!60,right=of feat] (model)  {ClassifierChain\\Random Forest};
+    \node[box=green!60, right=of model] (out)   {Risk Scores\\(3 labels)};
+
+    \draw[arr=blue!60]   (ui)    -- node[above,font=\scriptsize]{Clinical inputs} (feat);
+    \draw[arr=teal!60]   (feat)  -- node[above,font=\scriptsize]{Feature vector}  (model);
+    \draw[arr=orange!60] (model) -- node[above,font=\scriptsize]{Probabilities}   (out);
+\end{tikzpicture}
+\caption{Real-time inference pipeline in the deployed application.}
+\label{fig:deploy_arch}
+\end{figure}
+
+\subsection{User Interface}
+
+The application is structured in a two-panel layout:
+
+\begin{itemize}
+    \item \textbf{Input Panel (left)}: Collects 18 clinical parameters grouped into
+          four sections --- Demographics, Laboratory Results, Hospital Utilisation, and
+          Medications. All inputs use validated widgets (sliders, dropdowns, number
+          fields) to prevent erroneous entries.
+
+    \item \textbf{Results Panel (right)}: Displays colour-coded risk cards for each
+          complication with a probability percentage, a visual progress bar, and a
+          risk badge (\textit{Low / Moderate / High}) relative to the tuned threshold.
+          A summary card identifies all flagged complications.
+\end{itemize}
+
+\subsection{Feature Reconstruction at Inference}
+
+During deployment, the model expects the same longitudinal feature vector produced
+by \texttt{feature\_engineering.py}. For single-visit inputs, the app constructs
+the full vector by setting \texttt{\_std = \_delta = \_slope = 0} and assigning
+the entered value to \texttt{\_mean = \_min = \_max = \_last}. The same
+\texttt{StandardScaler} fitted during training (\texttt{scaler\_final.pkl}) is
+then applied only to the 76 numeric columns before inference, leaving the
+one-hot encoded categorical columns unscaled.
+
+\subsection{Deployment Configuration}
+
+The Space runs on the \textbf{Streamlit SDK} provided by Hugging Face.
+The repository contains:
+
+\begin{verbatim}
+/  app.py                     <- main application entry-point
+   requirements.txt           <- pinned dependencies
+   models/
+       chain_rf.pkl           <- ClassifierChain RF (best model)
+       training_metadata.pkl  <- feature column list
+   data/processed/
+       scaler_final.pkl       <- StandardScaler fitted on training set
+\end{verbatim}
+
+Model files exceed GitHub's standard 50\,MB limit and are stored using
+\textbf{Git Large File Storage (LFS)} in both the GitHub repository and
+the Hugging Face Space.
+
+%------------------------------------------------
+
+\section{Comparative Analysis and Ablation Study}
+
+\subsection{Final Model Comparison}
+
+Table~\ref{tab:final_compare} summarises model performance before and after
+threshold tuning on the held-out test set.
+
+\begin{table}[H]
+\centering
+\caption{Final model comparison (test set, 20\% hold-out)}
+\label{tab:final_compare}
+\begin{tabular}{lcccc}
+\toprule
+\textbf{Model} & \textbf{F1-Micro} & \textbf{F1-Macro} & \textbf{Recall-Macro} & \textbf{AUC-Macro} \\
+\midrule
+Chain RF (base)     & 0.606 & 0.343 & 0.394 & 0.708 \\
+MO GBM (base)       & 0.726 & 0.297 & 0.313 & 0.724 \\
+Neural Net (base)   & 0.464 & 0.336 & 0.916 & 0.707 \\
+\midrule
+Chain RF (tuned)    & 0.495 & 0.362 & \textbf{0.878} & 0.708 \\
+MO GBM (tuned)      & 0.650 & 0.363 & 0.591 & 0.724 \\
+Neural Net (tuned)  & 0.503 & 0.361 & 0.853 & 0.707 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The \textbf{ClassifierChain RF with tuned thresholds} was selected as the final
+deployed model. It is the only configuration that achieves Recall $\geq 0.80$
+\emph{simultaneously} for all three labels while maintaining competitive
+F1-Macro performance.
+
+\subsection{Ablation: Impact of Longitudinal Features}
+
+To quantify the contribution of longitudinal feature aggregation, a baseline
+ClassifierChain was trained using only the static (last-visit) values without
+\texttt{\_slope}, \texttt{\_delta}, or \texttt{\_std} features.
+
+\begin{table}[H]
+\centering
+\caption{Ablation study --- longitudinal features vs.\ static-only}
+\label{tab:ablation}
+\begin{tabular}{lccc}
+\toprule
+\textbf{Feature Set} & \textbf{F1-Macro} & \textbf{Recall-Macro} & \textbf{AUC-Macro} \\
+\midrule
+Static only (last visit)          & 0.328 & 0.831 & 0.681 \\
+\textbf{Full longitudinal (ours)} & \textbf{0.362} & \textbf{0.878} & \textbf{0.708} \\
+\midrule
+$\Delta$                          & +0.034 & +0.047 & +0.027 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Longitudinal features (\texttt{\_slope}, \texttt{\_delta}, \texttt{\_std}) provide
+a consistent improvement across all metrics, confirming that disease trajectory
+information contributes meaningfully beyond single-visit snapshots.
+
+\subsection{Ablation: Impact of Threshold Optimisation}
+
+Using a fixed threshold of 0.50 across all labels produced near-zero recall for
+neuropathy (prevalence = 0.8\%). Per-label threshold tuning to maximise
+Recall $\geq 0.80$ recovered neuropathy recall from 0.03 to 0.87 at the cost
+of a moderate reduction in precision. This precision--recall tradeoff is
+explicitly acceptable in a clinical screening context where false negatives
+(missed complications) carry greater consequence than false positives.
+
+%------------------------------------------------
+
+\section{Limitations and Future Work}
+
+\subsection{Current Limitations}
+
+\begin{enumerate}
+    \item \textbf{Synthetic longitudinal ordering.} Encounters are sorted by
+          encounter ID as a proxy for visit order; true date-stamped data would
+          produce more reliable slope and delta features.
+
+    \item \textbf{Severe neuropathy imbalance.} At 0.8\% prevalence,
+          neuropathy recall is sensitive to threshold choice and cannot be
+          substantially improved without oversampling (e.g., SMOTE) or
+          additional training data.
+
+    \item \textbf{Inference on single-visit patients.} The app reconstructs
+          longitudinal features assuming one visit, zeroing out all trend
+          statistics. Multi-visit patients would benefit from richer features
+          but require multiple inputs.
+
+    \item \textbf{No prospective validation.} All evaluation is performed on
+          a held-out split of the same dataset. External validation on an
+          independent clinical cohort is required before any real-world use.
+\end{enumerate}
+
+\subsection{Future Directions}
+
+\begin{itemize}
+    \item Apply SMOTE or class-conditional oversampling to improve neuropathy recall.
+    \item Incorporate actual visit timestamps to improve longitudinal feature quality.
+    \item Explore transformer-based sequential models (e.g., Time-Series Transformer)
+          over the visit sequence rather than manual aggregation.
+    \item Extend to additional complication types (retinopathy, foot ulcers).
+    \item Conduct external validation on an independent clinical dataset.
+\end{itemize}
 
 \end{document}
