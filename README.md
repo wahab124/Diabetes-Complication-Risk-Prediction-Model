@@ -52,6 +52,7 @@ Diabetes-Complication-Risk-Prediction-Model/
 │
 ├── README.md
 ├── .gitignore
+├── .gitattributes
 ├── requirements.txt
 ├── app.py                        # Streamlit web application (deployed on HF Spaces)
 │
