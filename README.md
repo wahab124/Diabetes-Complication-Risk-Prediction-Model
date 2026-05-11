@@ -53,30 +53,33 @@ Diabetes-Complication-Risk-Prediction-Model/
 ├── README.md
 ├── .gitignore
 ├── requirements.txt
+├── app.py                        # Streamlit web application (deployed on HF Spaces)
 │
 ├── data_scripts/
 │   ├── data_collection.py        # Downloads dataset from UCI
 │   ├── cleaning.py               # Handles missing values, outliers
-│   ├── data_preprocessing.py     # Encodes categoricals, normalises features
 │   └── feature_engineering.py   # Builds longitudinal features, derives labels
 │
 ├── src/
 │   ├── train_model.py            # Phase 3: trains all 3 models
 │   ├── evaluate.py               # Phase 4: metrics, ROC curves, all plots
-│   └── bias_check.py             # Phase 4: demographic subgroup bias analysis
+│   └── bias_check.py            # Phase 4: demographic subgroup bias analysis
 │
-├── models/                       # Saved model files (see download link below)
+├── models/                       # Saved model files (tracked via Git LFS)
 │   ├── chain_rf.pkl
 │   ├── mo_gbm.pkl
 │   ├── nn_model.pth
 │   └── training_metadata.pkl
+│
+├── data/processed/
+│   └── scaler_final.pkl          # StandardScaler fitted on training set (Git LFS)
 │
 ├── notebooks/
 │   ├── exploratory_data_analysis.ipynb
 │   └── model_results.ipynb
 │
 └── report/
-    ├── report.tex                # Full LaTeX report (Deliverables 1 & 2)
+    ├── report.tex                # Full LaTeX report (Deliverables 1, 2 & 3)
     ├── report.pdf
     ├── deliverable_1/figures/
     └── deliverable_2/figures/    # All evaluation plots and bias check figures
@@ -157,6 +160,11 @@ Generates demographic subgroup recall plots (age, gender, race) and flags subgro
 jupyter notebook notebooks/model_results.ipynb
 ```
 
+### 9. Run the app locally
+
+```bash
+streamlit run app.py
+```
 ---
 
 ## Model Architecture
